@@ -7,7 +7,8 @@
 ; 1 byte of FreeRAM used ($14C1)
 ; ------------------------------------------------------------------------------------------
 
-if read1($00FFD5) == $23        ; check if the rom is sa-1
+; check if the rom is sa-1
+if read1($00FFD5) == $23
     sa1rom
     !sa1 = 1
     !addr = $6000
@@ -18,7 +19,6 @@ else
     !addr = $0000
     !bank = $800000
 endif
-
 
 ; ------------------------------------------------------------------------------------------
 ; Options. Set to 0 to not apply these features
