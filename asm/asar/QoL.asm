@@ -157,6 +157,8 @@ endif
 ; Anti-Powerup Farming
 ; ------------------------------------------------------------------------------------------
 
+; This patch lets you give Mario a power-up on the Overworld by pressing R
+
 !FillItemBox = 0            ; Set to 1 to also store power up in the player's item box
 !FreeRAM = $14C1|!addr      ; FreeRAM uses as a check for the power-up state
 
