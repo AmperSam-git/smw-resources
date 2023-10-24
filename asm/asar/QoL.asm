@@ -2,7 +2,7 @@
 ; Unified Quality of Life patch set by AmperSam
 ;
 ; Credit to WhiteYoshiEgg and carol for Fast Overworld (https://smwc.me/s/20813) and
-; Alcaro for AutoSave (https://smwc.me/s/12921) and Anti-Farming by AmperSam
+; Alcaro for AutoSave (https://smwc.me/s/12921). Anti-Farming patch by AmperSam
 ; ------------------------------------------------------------------------------------------
 ; 1 byte of FreeRAM used ($14C1)
 ; ------------------------------------------------------------------------------------------
