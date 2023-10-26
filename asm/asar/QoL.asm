@@ -27,7 +27,11 @@ endif
 !InfiniteLives = 1          ; Disable gaining and losing lives
 !FastOverworld = 1          ; Triple Mario's speed on the Overworld
 !AutoSave = 1               ; Saves the game every time you move on the Overworld
-!AntiFarming = 0            ; Lets you cycle power-ups on the Overworld by pressing R
+!AntiFarming = 0            ; Enable changing Mario's initial power-up state on the OW with R
+
+; Anti-farming option
+!FillItemBox = 0            ; Set to 1 to also store power up in the player's item box
+
 
 ; ------------------------------------------------------------------------------------------
 ; Infinite Lives
@@ -141,7 +145,7 @@ if !AutoSave
         SEP #$30
         PLB
 
-        JSL $009BC9
+        JSL $009BC9|!bank
         PLP
         PLY
         PLX
@@ -158,8 +162,6 @@ endif
 ; ------------------------------------------------------------------------------------------
 
 ; This patch lets you give Mario a power-up on the Overworld by pressing R
-
-!FillItemBox = 0            ; Set to 1 to also store power up in the player's item box
 !FreeRAM = $14C1|!addr      ; FreeRAM uses as a check for the power-up state
 
 PowerUps:
