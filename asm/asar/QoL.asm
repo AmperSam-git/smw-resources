@@ -2,9 +2,7 @@
 ; Unified Quality of Life patch set by AmperSam
 ;
 ; Credit to WhiteYoshiEgg and carol for Fast Overworld (https://smwc.me/s/20813) and
-; Alcaro for AutoSave (https://smwc.me/s/12921). Anti-Farming patch by AmperSam
-; ------------------------------------------------------------------------------------------
-; 1 byte of FreeRAM used ($14C1)
+; Alcaro for AutoSave (https://smwc.me/s/12921). Anti-Farming patch by me (AmperSam)
 ; ------------------------------------------------------------------------------------------
 
 ; check if the rom is sa-1
@@ -20,6 +18,14 @@ else
     !bank = $800000
 endif
 
+
+; ------------------------------------------------------------------------------------------
+; FreeRAM
+; ------------------------------------------------------------------------------------------
+
+!FreeRAM = $14C1|!addr      ; 1 byte; used as a check for the power-up state
+
+
 ; ------------------------------------------------------------------------------------------
 ; Options. Set to 0 to not apply these features
 ; ------------------------------------------------------------------------------------------
@@ -27,9 +33,9 @@ endif
 !InfiniteLives = 1          ; Disable gaining and losing lives
 !FastOverworld = 1          ; Triple Mario's speed on the Overworld
 !AutoSave = 1               ; Saves the game every time you move on the Overworld
-!AntiFarming = 0            ; Enable changing Mario's initial power-up state on the OW with R
+!AntiFarming = 0            ; Enable changing Mario's power-up state on the OW with R
 
-; Anti-farming option
+; extra Anti-farming options
 !FillItemBox = 0            ; Set to 1 to also store power up in the player's item box
 
 
@@ -161,12 +167,8 @@ endif
 ; Anti-Powerup Farming
 ; ------------------------------------------------------------------------------------------
 
-; This patch lets you give Mario a power-up on the Overworld by pressing R
-!FreeRAM = $14C1|!addr      ; FreeRAM uses as a check for the power-up state
-
 PowerUps:
     db $01,$02,$03,$00      ; Power ups ($01 = mushroom, $02 = cape, $03 = flower, $00 = none)
-
 
 if !AntiFarming
     print " Applying Anti Power-Up Farming patch..."
