@@ -22,17 +22,7 @@ else
     !bank = $800000
 endif
 
-!Freeram = $13E6|!addr ; 1 byte
-
-; check flag macro
-macro check_flag()
-    LDA !Freeram
-if !default
-    BEQ .enable
-else
-    BNE .enable
-endif
-endmacro
+!Freeram = $13E6|!addr ; 1 byte (must be cleared at level load)
 
 ; Hijack
 org $00D090
@@ -45,7 +35,12 @@ ToggledFireballs:
     LDA $140D|!addr    ; original code
     BEQ .disable       ; check if spin jumping
 
-    %check_flag()
+    LDA !Freeram
+	if !default
+		BEQ .enable
+	else
+		BNE .enable
+	endif
 .disable
 	JML $00D0AD|!bank
 .enable
