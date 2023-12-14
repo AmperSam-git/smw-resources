@@ -3,28 +3,32 @@
 !StarFrames = $0A   ; only a small amount so there's leeway for the player
 !Speed = $70        ; p-speed
 
+; addresses
+!StarPowerTimer = $1490|!addr
+!PSpeedMeter = $13E4|!addr
+
 main:
-    LDA $13E4|!addr
+    LDA !PSpeedMeter
     CMP #!Speed
     BNE .return
 .star
     LDA #!StarFrames
-    STA $1490|!addr
+    STA !StarPowerTimer
 .loop
-    LDA $1490|!addr
+    LDA !StarPowerTimer
     BEQ RefillStar
 .speed_check
-    LDA $13E4|!addr
+    LDA !PSpeedMeter
     CMP #!Speed
     BNE NoStar
 .return
     RTL
 
 NoStar:
-    STZ $1490|!addr
+    STZ !StarPowerTimer
     RTL
 
 RefillStar:
     LDA #!StarFrames
-    STA $1490|!addr
+    STA !StarPowerTimer
     RTL

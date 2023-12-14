@@ -1,6 +1,18 @@
-!Layer2Speed    = $144A|!addr
-!Layer2Mult     = $1452|!addr
-!Layer2Pos      = $1466|!addr
+; Basic Layer 2 Wrap
+
+!NoHorzScroll   = 1     ;> no horz scroll
+!FreeVerticalScroll = 0 ;> free vertical scroll
+
+; Defines
+!Dir   = $00            ;> scroll direction: #$00 = left/up; #$02 = right/down.
+!Speed = $00F0          ;> scroll speed: positive = left/up; negative = right/down.
+!Accel = $0002          ;> acceleration
+
+; Layer 2 Addresses
+!Layer2Speed    = $144A|!addr   ; use $144A for layer 2 X-speed, use $144C for layer 2 Y-speed
+!Layer2Mult     = $1452|!addr   ; use $1452 for updating layer 2 X-position, use $1454 for updating layer 2 Y-position
+!Layer2Pos      = $1466|!addr   ; use $1466 for layer 2 X-position next frame, use $1468 for layer 2 Y-position next frame
+
 
 init:
     stz !Layer2Speed                ;\ reset speed
@@ -8,21 +20,26 @@ init:
     rtl
 
 main:
-    ;lda #$01 : sta $1404|!addr      ;> free vertical scroll
-    stz $1411|!addr                 ;> no horz scroll
+    if !FreeVerticalScroll
+    lda #$01 : sta $1404|!addr
+    endif
+
+    if !NoHorzScroll
+    stz $1411|!addr
+    endif
 
     lda $9D
     ora $13D4|!addr
     bne .return
 
-    lda #$00 : sta $56              ;> scroll direction: #$00 = left/up; #$02 = right/down.
+    lda #!Dir : sta $56
 
     rep #$20
     lda !Layer2Speed
-    cmp.w #$01B0                    ;> scroll speed: positive = left/up; negative = right/down.
+    cmp.w #!Speed
     beq +
     clc
-    adc.w #$0002                    ;> acceleration
+    adc.w #!Accel
     sta !Layer2Speed
 +   lda !Layer2Mult
     and #$00FF
