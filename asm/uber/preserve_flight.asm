@@ -26,7 +26,7 @@ else
 endif
 
 init:
-    lda $19 : beq .return                       ; skip if small Mario
+    lda $19 : cmp #$02 : bne .return            ; skip if not cape
     lda !freeram_flag : beq .return             ; skip if flag isn't set
 
     ; restore from backup
