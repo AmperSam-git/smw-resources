@@ -1,11 +1,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Stationary Piranha Plants, by AmperSam, based on disassembly by imamelia.
+;; Stationary Piranha Plants 1.1, by AmperSam, based on disassembly by imamelia.
 ;;
 ;; Uses first extra bit: YES
 ;;
-;; If the first extra bit is clear, the Piranha Plant will be rightside-up.  If the first extra
-;; bit is set, the Piranha Plant will be upside-down.
+;;      If the first extra bit is clear, the Piranha Plant will be rightside-up. If the first extra
+;;      bit is set, the Piranha Plant will be upside-down.
+;;
+;; Extra byte 1: determines the horizontal offset for the plant (in pixels).
+;;
+;;      Positive values ($00-$7F) will offset to the right (no offset if $00).
+;;      Negative values ($80-$FF) will offset to the left (no offset if $80).
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -44,7 +49,7 @@ db $5A,$58,$5A,$58,$DA,$D8,$DA,$D8
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-        print "INIT ",pc
+print "INIT ", pc
         JSR PiranhaInit
         RTL
 
@@ -55,14 +60,47 @@ db $5A,$58,$5A,$58,$DA,$D8,$DA,$D8
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PiranhaInit:
+        LDA !extra_byte_1,x     ; grab the pixel offset from the sprite's extra byte
+        STA $00                 ;
 
+        LDA $00                 ; check if offset is a negative value
+        CMP #$80                ;
+        BCC .add_x_offset       ; jump to adding if positive
+
+.subtract_x_offset
+        LDA $00                 ;
+        SEC                     ;
+        SBC #$80                ; subtract $80 to invert the offset value
+        STA $01                 ;
+        LDA !E4,x               ;
+        SEC                     ;
+        SBC $01                 ; add to the sprite's X position
+        STA !E4,x               ;
+        LDA !14E0,x             ;\
+        SBC #$00                ;|do pseudo 16-bit math
+        STA !14E0,x             ;/
+
+        BRA .extra_bit_check
+
+.add_x_offset
+        LDA !E4,x               ;
+        CLC                     ;
+        ADC $00                 ; add to the sprite's X position
+        STA !E4,x               ;
+        LDA !14E0,x             ;\
+        ADC #$00                ;|do pseudo 16-bit math
+        STA !14E0,x             ;/
+
+.extra_bit_check
         LDA !7FAB10,x           ; check the extra bit
         AND #$04                ; if the extra bit is clear...
         LSR                     ;
         LSR                     ;
         STA !1510,x             ;
-        BEQ InitUpPiranha       ; skip the part of the init routine strictly for the upside-down plant
 
+        BEQ .right_side_up      ; skip the part for the upside-down plant
+
+.upside_down
         LDA !D8,x               ;
         SEC                     ; offset its Y position
         SBC #$00                ;
@@ -71,19 +109,13 @@ PiranhaInit:
         SBC #$00                ; to prevent overflow
         STA !14D4,x             ;
 
-InitUpPiranha:
-
-        LDA !E4,x               ;
-        CLC                     ;
-        ADC #$08                ; shift the sprite's X position to the right 8 pixels
-        STA !E4,x               ;
+.right_side_up:
         DEC !D8,x               ; shift the sprite down 1 pixels
         LDA !D8,x               ;
         CMP #$FF                ; if there was overflow...
-        BNE EndInit             ;
+        BNE +                   ;
         DEC !14D4,x             ; decrement the high byte as well
-
-EndInit:
+        +
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,12 +125,12 @@ EndInit:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 print "MAIN ",pc
-PHB
-PHK
-PLB
-JSR PiranhaPlantsMain
-PLB
-RTL
+        PHB
+        PHK
+        PLB
+        JSR PiranhaPlantsMain
+        PLB
+        RTL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
