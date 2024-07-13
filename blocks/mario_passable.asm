@@ -7,10 +7,10 @@ JMP Mario : JMP Mario : JMP Mario
 JMP Mario : JMP Mario
 
 Mario:
-	LDY #$00
-	LDA #$25
-	STA $1693|!addr
+    LDY #$00
+    LDA #$25
+    STA $1693|!addr
 Return:
-	RTL
+    RTL
 
 print "A block that is only passable by Mario. To sprites, it will obey the Act as setting."

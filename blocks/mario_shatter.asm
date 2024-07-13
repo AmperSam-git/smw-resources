@@ -4,13 +4,13 @@ JMP ShatterIfBelow : JMP Shatter : JMP Shatter : JMP Return : JMP Return : JMP R
 JMP Shatter : JMP Return : JMP Return
 
 ShatterIfBelow:
-	BRA +
+    BRA +
 Shatter:
-	LDA #$FF : STA $7D
+    LDA #$FF : STA $7D
 +
-	LDA #$0F : TRB $9A : TRB $98
-	%shatter_block()
+    LDA #$0F : TRB $9A : TRB $98
+    %shatter_block()
 Return:
-	RTL
+    RTL
 
 print "A block that shatters when mario touches it. Is solid for sprites"

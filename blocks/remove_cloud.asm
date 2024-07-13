@@ -7,11 +7,11 @@ JMP Mario : JMP Mario : JMP Mario
 JMP Mario : JMP Mario
 
 Mario:
-	LDA $18C2|!addr             ;> check if in the cloud
+    LDA $18C2|!addr             ;> check if in the cloud
     BEQ +                       ;> skip return if not
     STA $18E0|!addr             ;> remove cloud
     +
 Return:
-	RTL
+    RTL
 
 print "Removes Lakitu cloud."

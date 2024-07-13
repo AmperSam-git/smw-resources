@@ -47,9 +47,9 @@ SpriteBump:
     LDA #$0A : STA !14C8,x
 
     ; make block pass through
-	LDY #$00
-	LDA #$25
-	STA $1693|!addr
+    LDY #$00
+    LDA #$25
+    STA $1693|!addr
 
 if !PlaySFX
     ; Play bounce sfx

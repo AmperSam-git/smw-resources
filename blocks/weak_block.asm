@@ -15,7 +15,7 @@ if !spin_breakable_only
     BRA Return                      ; otherwise return
 endif
 
-.check_y_speed:
+.check_y_speed
     LDA $7D : CMP #$80              ; check if Mario moving upwards...
     BCC	Break                       ; if not, go to break block
     BRA Return                      ; otherwise return
