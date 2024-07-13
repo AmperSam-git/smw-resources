@@ -6,23 +6,23 @@
 ;             Defines            ;
 ; ------------------------------ ;
 
-!Logic = 1		; 0 = Do action when ANY of selected buttons pressed. 1 = Do action when ALL of selected buttons pressed.
+!Logic = 1      ; 0 = Do action when ANY of selected buttons pressed. 1 = Do action when ALL of selected buttons pressed.
 
-!b = !false		; B
-!y = !false		; Y
-!e = !false		; Select
-!t = !false		; Start
-!U = !false		; Up
-!D = !false		; Down
-!L = !true		; Left
-!R = !true		; Right
+!b = !false     ; B
+!y = !false     ; Y
+!e = !false     ; Select
+!t = !false     ; Start
+!U = !false     ; Up
+!D = !false     ; Down
+!L = !true      ; Left
+!R = !true      ; Right
 
 ; These two button groups function separately of each other. Set all the buttons in a group to "!false" to disable the effect for that group.
 
-!a = !true		; A
-!x = !true		; X
-!l = !true		; L
-!r = !true		; R
+!a = !true      ; A
+!x = !true      ; X
+!l = !true      ; L
+!r = !true      ; R
 
 ; ------------------------------ ;
 ;          Do not edit           ;
@@ -51,39 +51,39 @@ endif
 ; ------------------------------ ;
 
 main:
-	LDA $9D
-	ORA $13D4|!addr
-	BNE Return
-	LDY $0DB3|!addr
-	if !byetUDLR == !true
-		LDA $0DA2|!addr,y
-		ORA $0DA6|!addr,y
-		AND #!Combo1
-		if !Logic
-			CMP #!Combo1
-			BEQ Action
-		else
-			BNE Action
-		endif
-	endif
-	if !axlr == !true
-		LDA $0DA4|!addr,y
-		ORA $0DA8|!addr,y
-		AND #!Combo2
-		if !Logic
-			CMP #!Combo2
-			BEQ Action
-		else
-		BNE Action
-		endif
-	endif
+    LDA $9D
+    ORA $13D4|!addr
+    BNE Return
+    LDY $0DB3|!addr
+    if !byetUDLR == !true
+        LDA $0DA2|!addr,y
+        ORA $0DA6|!addr,y
+        AND #!Combo1
+        if !Logic
+            CMP #!Combo1
+            BEQ Action
+        else
+            BNE Action
+        endif
+    endif
+    if !axlr == !true
+        LDA $0DA4|!addr,y
+        ORA $0DA8|!addr,y
+        AND #!Combo2
+        if !Logic
+            CMP #!Combo2
+            BEQ Action
+        else
+        BNE Action
+        endif
+    endif
 
 Return:
-	RTL
+    RTL
 
 Action:
-	LDA #$06
-	STA $71
-	STZ $89
-	STZ $88
-	RTL
+    LDA #$06
+    STA $71
+    STZ $89
+    STZ $88
+    RTL
