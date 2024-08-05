@@ -1,0 +1,1 @@
+Simply place both the usertoolbar.txt and the usertoolbar_icons.bmp in the same folder as Lunar Magic.
