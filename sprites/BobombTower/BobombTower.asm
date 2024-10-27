@@ -99,7 +99,7 @@ TowerMain:
     EOR #$FFFF
     INC
     +
-    CMP #$0010
+    CMP #$000D
     SEP #$20
     BCS .no_damage
 
@@ -112,7 +112,7 @@ TowerMain:
     LDY $187A|!addr
     REP #$20
     BEQ +
-    SBC #$0010
+    SBC #$000D
     + PLY
 
     SBC $96
@@ -123,8 +123,12 @@ TowerMain:
     LDA $1497|!addr             ; if the player is flashing invincible...
     BNE .no_damage              ; don't interact
 
-    LDA $1490|!addr             ; if the player is invencible...
+    LDA $1490|!addr             ; if the player is invincible...
     BNE BobombSpawn             ; jump to spawn, but kill the sprite
+
+    LDA $13E0|!addr             ;
+    CMP #$1C                    ; if the player is sliding
+    BEQ BobombSpawn             ; jump to spawn, but kill the sprite
 
     LDA !154C,x                 ; if the interaction-disable timer is set...
     BNE .no_damage              ; act as if there were no contact at all
@@ -226,9 +230,17 @@ BobombSpawn:
     %Star()
     BRA ++
     +
+
+    LDA $13E0|!addr             ;
+    CMP #$1C                    ;  don't boost if the player is sliding
+    BEQ .skip                   ;
+
     JSL $01AA33|!BankB          ; boost the player's speed
+.skip
+
     JSL $01AB99|!BankB          ; display contact graphics
-    LDA #$02 : STA $1DF9|!addr
+    LDA #$02 : STA $1DF9|!addr  ; play sound effect
+
     ++
 
     DEC $0C
