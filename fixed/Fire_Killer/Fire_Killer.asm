@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Fireball Bullet Bill by 33953YoShI (wakogoro)
+; Fireball Bullet Bill by 33953YoShI (Akaginite)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uses first extra bit: YES
 ; 	- if clear, fireballs fire at 45 degree angles
