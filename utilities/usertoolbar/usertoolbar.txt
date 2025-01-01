@@ -1,3 +1,5 @@
+; Lunar Monitor
+
 LM_ADDIMAGE "usertoolbar_icons.bmp"
 
 ***START***
