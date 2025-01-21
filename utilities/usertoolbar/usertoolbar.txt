@@ -1,5 +1,3 @@
-; Lunar Monitor
-
 LM_ADDIMAGE "usertoolbar_icons.bmp"
 
 ***START***
@@ -18,7 +16,7 @@ LM_USEIMAGE_LIST
 
 ***START***
 explorer.exe %2
-1,Open Current ROM Directory
+9,Open Current ROM Directory
 LM_USEIMAGE_LIST,LM_CLOSE_ON_CLOSE,LM_DIR_LM,LM_NO_CONSOLE_WINDOW
 
 ***START***
@@ -26,7 +24,7 @@ LM_SPACER
 
 ***START***
 LM_VIEW_BLOCK_EXITS
-20,View Exit-Enabled Tiles (Ctrl+F1)
+24,View Exit-Enabled Tiles (Ctrl+F1)
 LM_USEIMAGE_LIST
 
 ***START***
@@ -36,7 +34,7 @@ LM_USEIMAGE_LIST
 
 ***START***
 LM_VIEW_BLOCK_CONTENTS
-21,View Block Contents (F6)
+26,View Block Contents (F6)
 LM_USEIMAGE_LIST
 
 ***START***
@@ -55,6 +53,24 @@ LM_USEIMAGE_LIST
 ***START***
 LM_VIEW_LINE_ON
 15,Toggle ON/OFF Switch Animation (0)
+LM_USEIMAGE_LIST
+
+***START***
+LM_SPACER
+
+***START***
+LM_VIEW_SCREEN_GRID
+28,View Sub-Screen Boundaries (F2)
+LM_USEIMAGE_LIST
+
+***START***
+LM_VIEW_SCREEN_GRID_2
+29,Show Game View Screen (F3)
+LM_USEIMAGE_LIST
+
+***START***
+LM_VIEW_TILE_GRID
+27,View Tile Grid Overlay (F8)
 LM_USEIMAGE_LIST
 
 ***START***
