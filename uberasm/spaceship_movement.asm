@@ -59,10 +59,12 @@ endif
 Up:
     LDA.b #($100-!SpeedV)
     STA $7D
+    STZ $7B
     RTL
 Down:
     LDA #!SpeedV
     STA $7D
+    STZ $7B
     RTL
 Left:
     LDA.b #($100-!SpeedH)
