@@ -10,11 +10,6 @@
 !SpeedV = $15   ;down/up
 
 main:
-    ; disable spin jump
-    LDA #%10000000
-    TRB $16
-    TRB $18
-
     ; don't run if dying
     LDA $71 : CMP #$09 : BEQ .return
 
@@ -34,6 +29,7 @@ Movement:
     ; load current buttons
     LDA $0DA2|!addr,y
     ORA $0DA6|!addr,y
+    AND #%00001111
 
     ; check cardinal directions
     CMP #%00001000 : BEQ Up
