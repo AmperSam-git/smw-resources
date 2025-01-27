@@ -57,50 +57,38 @@ endif
 
 ; Cardinal Directions
 Up:
-    LDA.b #($100-!SpeedV)
-    STA $7D
+    LDA #-!SpeedV : STA $7D
     STZ $7B
     RTL
 Down:
-    LDA #!SpeedV
-    STA $7D
+    LDA #!SpeedV : STA $7D
     STZ $7B
     RTL
 Left:
-    LDA.b #($100-!SpeedH)
-    STA $7B
+    LDA #-!SpeedH : STA $7B
     STZ $7D
     RTL
 Right:
-    LDA #!SpeedH
-    STA $7B
+    LDA #!SpeedH : STA $7B
     STZ $7D
     RTL
 
 if !allow_diagonals
 ; Diagonal Directions
 UpLeft:
-    LDA.b #($100-!SpeedV)
-    STA $7D
-    LDA.b #($100-!SpeedH)
-    STA $7B
+    LDA #-!SpeedV : STA $7D
+    LDA #-!SpeedH : STA $7B
     RTL
 UpRight:
-    LDA.b #($100-!SpeedV)
-    STA $7D
-    LDA #!SpeedH
-    STA $7B
+    LDA #-!SpeedV : STA $7D
+    LDA #!SpeedH : STA $7B
     RTL
 DownLeft:
-    LDA #!SpeedV
-    STA $7D
-    LDA.b #($100-!SpeedH)
-    STA $7B
+    LDA #!SpeedV : STA $7D
+    LDA #-!SpeedH : STA $7B
     RTL
 DownRight:
-    LDA #!SpeedV
-    STA $7D
-    LDA #!SpeedH
-    STA $7B
+    LDA #!SpeedV : STA $7D
+    LDA #!SpeedH : STA $7B
     RTL
 endif
