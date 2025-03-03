@@ -1,8 +1,8 @@
 ; act as 25
-db $37
-
-REP 8 : JMP NoFly : JMP InstantFly
-REP 1 : JMP NoFly
+db $42
+JMP NoFly : JMP NoFly : JMP NoFly
+JMP NoFly : JMP NoFly : JMP NoFly : JMP NoFly
+JMP NoFly : JMP InstantFly : JMP NoFly
 
 InstantFly:
     LDA $72             ;\ Skip if not on ground
