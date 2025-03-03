@@ -56,18 +56,66 @@
   "Extra Property Byte 2": 0,
   "Additional Byte Count (extra bit clear)": 1,
   "Additional Byte Count (extra bit set)": 1,
-  "Map16": "",
+  "Map16": "SxVbFUwVXBVLEVsRTBFcEUsNWw1MDVwNSwlbCUwJXAk=",
   "Displays": [
     {
-      "X": 0,
-      "Y": 0,
+      "Value": 0,
+      "Index": 1,
       "Description": "An enterable pipe Mario can carry around. Use them in pairs.",
       "ExtraBit": false,
       "Tiles": [
         {
           "X offset": 0,
           "Y offset": 0,
-          "map16 tile": 0
+          "map16 tile": 768
+        }
+      ],
+      "GFXInfo": {},
+      "DisplayText": "",
+      "UseText": false
+    },
+    {
+      "Value": 1,
+      "Index": 1,
+      "Description": "",
+      "ExtraBit": false,
+      "Tiles": [
+        {
+          "X offset": 0,
+          "Y offset": 0,
+          "map16 tile": 769
+        }
+      ],
+      "GFXInfo": {},
+      "DisplayText": "",
+      "UseText": false
+    },
+    {
+      "Value": 2,
+      "Index": 1,
+      "Description": "",
+      "ExtraBit": false,
+      "Tiles": [
+        {
+          "X offset": 0,
+          "Y offset": 0,
+          "map16 tile": 770
+        }
+      ],
+      "GFXInfo": {},
+      "DisplayText": "",
+      "UseText": false
+    },
+    {
+      "Value": 3,
+      "Index": 1,
+      "Description": "",
+      "ExtraBit": false,
+      "Tiles": [
+        {
+          "X offset": 0,
+          "Y offset": 0,
+          "map16 tile": 771
         }
       ],
       "GFXInfo": {},
@@ -141,5 +189,5 @@
       "Extra Property Byte 12": 0
     }
   ],
-  "DisplayType": "XY"
+  "DisplayType": "ExByte"
 }
