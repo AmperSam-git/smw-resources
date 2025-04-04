@@ -23,10 +23,11 @@
 ; defines and tables
 ;----------------------------------------------------------------
 
-Tilemap:
-    db $80,$82,$80,$82
+!Tile = $EE
 Props:
-    db $40,$00,$40,$00
+    db $40,$00
+
+
 WingSize:
     db $00,$02,$00,$02
 WingXDisp:
@@ -251,9 +252,6 @@ Graphics:
     SBC #$02
     STA $0301|!Base2,y
 
-    LDX $06
-    LDA Tilemap,x
-    STA $03
 
     LDA $00
     STA $0300|!Base2,y
@@ -261,13 +259,13 @@ Graphics:
     LDA $01
     STA $0301|!Base2,y
 
-    LDA $03
+    LDA #!Tile
     STA $0302|!Base2,y
 
     LDX $02
     LDA $04
     ORA Props,x
-    ;ORA $64
+    ; ORA $64
     STA $0303|!Base2,y
 
     PHY
