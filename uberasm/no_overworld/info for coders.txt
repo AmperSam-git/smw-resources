@@ -1,0 +1,82 @@
+;-------------------------------------------------------------
+
+How can I get the current level?
+
+        !first_level_13BF = 00
+        if !first_level >= $25
+            !first_level_13BF #= !first_level-$DC
+        else
+            !first_level_13BF #= !first_level
+        endif
+
+        LDA $1F2E  ; load number of beaten levels
+        CLC
+        ADC #!first_level_13BF
+
+    if you are using !advanced_mode, then
+
+        LDA !curr_level ; (check freeram section in NoOverworld.asm)
+
+;-------------------------------------------------------------
+
+How do I warp/teleport/change to a different level?
+
+    Only know how to do it in !advanced_mode:
+
+        !teleport_to = $20
+        LDA #$0B   ;go to overworld
+        STA $0100
+        LDA #!teleport_to ;change level
+        STA !curr_level
+
+    You can try that in a custom block, for example. Might need an RTL or RTS.
+
+;-------------------------------------------------------------
+
+How do I know if a level was beaten by a secret exit(only !advanced mode)
+
+    This table should be out of your code flow.
+        FlagsTable: db $01, $02, $04, $08 ;
+
+    Let's get if player has beaten secret exit 1:
+
+        !normal_exit = $00
+        !secret_exit1 = $01
+        !secret_exit2 = $02
+        !secret_exit3 = $03
+
+        LDA $1EA2,x ; X must be the translevel
+        LDY #!secret_exit1
+        AND FlagsTable,y
+
+    Now, A would contain zero or 1. (0 = unbeaten, 1 = beaten)
+
+    As you can see, $1EA2 now contains info about beaten exits instead of (now useless) Overworld information.
+
+;-------------------------------------------------------------
+
+Now that overworld is disabled, can I use overworld SRAM?
+
+    Honestly, this patch is not the best for that. But you now can use this SRAM:
+
+        $7E1F02 (15 bytes) : Overworld event flags, bitwise.
+        $7E1F15 (2 bytes) : Player animations in ow.
+        $7E1F2B (3 bytes) : Empty. Cleared on reset and titlescreen load.
+
+    You sould be able to use those sram now.
+    Two new "sram addrs" are used now by this patch:
+
+        !curr_level = $1F13|!addr ; this saves current level to sram
+	    !new_game_flag = $1F14|!addr
+
+;-------------------------------------------------------------
+
+What about overworld RAM (no sram related), can I use it now?
+
+
+    I would say most of it. But remember not to use the ram that holds the player's position in the OW. ($1F11-$1F12)($1F17-$1F26)
+    This patch still uses it.
+
+    udpate: these large portions of ram should be free now:
+	$7F0000 (16384 bytes)
+	$7F4000 (16384 bytes)
