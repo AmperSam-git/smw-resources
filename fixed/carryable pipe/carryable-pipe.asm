@@ -29,27 +29,26 @@
 
         !State = !1504,x
         !OtherPipeIndex = !1510,x
-        !ControllerBackup = !151C,x
         !Timer = !1528,x
 
 
 
 if !FreezeTimeWhenTeleporting && !FixFreeze
-        pushpc
+    pushpc
         org $00A2E2 : JSL RestoreFreeze
-        pullpc
+    pullpc
 
-        RestoreFreeze:
-                LDA !FreezeRAM
-                BEQ +
-                STA $9D
-                LDA #$00
-                STA !FreezeRAM
-        + JML $01808C|!BankB
+    RestoreFreeze:
+        LDA !FreezeRAM
+        BEQ +
+        STA $9D
+        LDA #$00
+        STA !FreezeRAM
+    +   JML $01808C|!BankB
 else
-        pushpc
+    pushpc
         org $00A2E2 : JSL $01808C|!BankB
-        pullpc
+    pullpc
 endif
 
 
@@ -97,8 +96,7 @@ HandleState:
         dw .idle, .enteringPipe, .teleporting, .exitingPipe
 
 
-
-        ; state 00: idle (carryable and solid, waiting for player to enter)
+; state 00: idle (carryable and solid, waiting for player to enter)
 
 .idle
         LDA !OtherPipeIndex                     ; \
@@ -106,7 +104,7 @@ HandleState:
         BNE ..dontLookForOtherPipe              ; | if the other pipe hasn't been found yet,
         JSR GetOtherPipeIndex                   ; | look for it
         TYA : STA !OtherPipeIndex               ; |
-..dontLookForOtherPipe                          ; /
+    ..dontLookForOtherPipe                      ; /
 
         JSR HandleInteraction                   ; \
         BCC ..notOnTop                          ; |
@@ -114,10 +112,10 @@ HandleState:
         LDA $15                                 ; | and pressing DOWN
         AND #$04                                ; |
         BNE ..beginTeleporting                  ; /
-..notOnTop:
+    ..notOnTop
         RTS
 
-..beginTeleporting
+    ..beginTeleporting
 
         JSR GetOtherPipeIndex                   ; \  check other pipe again before actually teleporting, just in case
         TYA : STA !OtherPipeIndex               ; /  (for example, yoshi may have swallowed the other end)
@@ -153,17 +151,12 @@ HandleState:
         LDA $13F9|!addr                         ; \  don't allow teleporting (and don't even play "wrong" sound)
         BNE .return                             ; /  if you're already teleporting (this can happen when you're standing on two at once)
 
-..doTeleport
+    ..doTeleport
 
         LDA !E4,x                               ; \
         STA $94                                 ; | center the player horizontally
         LDA !14E0,x                             ; |
         STA $95                                 ; /
-
-        LDA $0DA0|!addr                         ; \
-        STA !ControllerBackup                   ; | disable the controller
-        LDA #$01                                ; |
-        STA $0DA0|!addr                         ; /
 
         JSR EraseFireballs
 
@@ -192,14 +185,13 @@ HandleState:
         TAY
         LDA #$00
         STA !15D0,y
-..noYoshi
-
+    ..noYoshi
         LDA #$08
         STA !Timer
         INC !State
         RTS
 
-..dontTeleport
+    ..dontTeleport
         SEP #$20
         LDA $16                                 ; \
         AND #$04                                ; | if you're not allowed to teleport,
@@ -212,7 +204,7 @@ HandleState:
 
 
 
-        ; state 01: "entering pipe" animation
+; state 01: "entering pipe" animation
 
 .enteringPipe
 
@@ -221,12 +213,12 @@ HandleState:
 
         LDA $18DF|!addr                         ; \
         BEQ ..notOnYoshi                        ; |
-..onYoshi                                       ; | set pipe entering pose
+    ..onYoshi                                   ; | set pipe entering pose
         LDA #$02                                ; |
         STA $1419|!addr                         ; |
         LDA #$21                                ; |
         BRA +                                   ; |
-..notOnYoshi                                    ; |
+    ..notOnYoshi                                ; |
         LDA #$0F                                ; |
 +       STA $13E0|!addr                         ; /
 
@@ -239,16 +231,16 @@ HandleState:
         STA $185C|!addr                         ; | (hiding the player, disabling interaction etc.)
         LDA #$02                                ; |
         STA $13F9|!addr                         ; |
-        if !FreezeTimeWhenTeleporting           ; |
-          LDA #$FF                              ; |
-          STA $9D                               ; |
-          if !FixFreeze                         ; |
+    if !FreezeTimeWhenTeleporting               ; |
+        LDA #$FF                                ; |
+        STA $9D                                 ; |
+        if !FixFreeze                           ; |
             STA !FreezeRAM                      ; |
-          endif                                 ; |
-        endif                                   ; /
+        endif                                   ; |
+    endif                                       ; /
         RTS
 
-..nextState
+    ..nextState
 
         JSR EraseFireballs
 
@@ -260,49 +252,55 @@ HandleState:
 
 
 
-        ; state 02: teleporting (player is invisible and moving between pipes)
+; state 02: teleporting (player is invisible and moving between pipes)
 
 .teleporting
 
         LDA #$01                                ; \
-        STA $1404|!addr                         ; |
-        STA $1406|!addr                         ; | all kinds of teleportation settings
-        STZ $73                                 ; |
-        LDA #$01                                ; |
-        STA $185C|!addr                         ; |
-        LDA #$02                                ; |
-        STA $13F9|!addr                         ; |
-        LDA #$FF                                ; |
-        STA $78                                 ; |
-        if !FreezeTimeWhenTeleporting           ; |
-          STA $9D                               ; |
-          if !FixFreeze                         ; |
+        STA $1404|!addr                         ; | enable camera scrolling
+        STA $1406|!addr                         ; /
+        LDA #$01                                ; \ disable object interaction
+        STA $185C|!addr                         ; /
+        LDA #$02                                ; \ set graphical priority
+        STA $13F9|!addr                         ; /
+        LDA #$FF                                ; \ hide player
+        STA $78                                 ; /
+        STZ $1401|!addr                         ; > disable screen scroll
+    if !FreezeTimeWhenTeleporting               ; \ freeze time
+        STA $9D                                 ; |
+        if !FixFreeze                           ; |
             STA !FreezeRAM                      ; |
-          endif                                 ; |
-        endif                                   ; /
+        endif                                   ; |
+    endif                                       ; /
 
+    ..ClearStatesWhileTeleporting
+        STZ $73                                 ; > unduck
+        STZ $13F3|!addr                         ; \ remove p-balloon
+        STZ $1891|!addr                         ; /
+        STZ $1697|!addr                         ; > remove consecutive stomps.
+        STZ $140D|!addr                         ; > so fire mario cannot shoot fireballs in pipe
+
+
+    if !DisableController
+        JSR DisableControllerInput
+    endif
+
+    ..SetSpeed
         JSR SetTeleportingXSpeed                ; \  move the player to the other pipe
         JSR SetTeleportingYSpeed                ; /
 
-..makeInvulnerableWhileTeleporting
-	LDA #$7F                                ; \ set the invulnerability timer
-	STA $1497|!addr                         ; /
+    ..makeInvulnerableWhileTeleporting
+        LDA #$03                                ; \ set the invulnerability timer
+        STA $1497|!addr                         ; /
 
-..checkIfMarioDied
-        LDA $13E0|!addr                         ; \ to be safe check if Mario is dead (via death pose)
-        CMP #$3E                                ; /
-        BEQ +
-        LDA !ControllerBackup                   ; \ re-enable the controller if he is dead
-        STA $0DA0|!addr                         ; /
-        +
-
+    ..speedInPipe
         LDA $7B                                 ; \
         ORA $7D                                 ; | if the player doesn't need to move anymore
         ORA $17BC|!addr                         ; | and the screen has caught up with them too,
         ORA $17BD|!addr                         ; | we're done teleporting
         BNE ..keepTeleporting                   ; /
 
-..doneTeleporting
+    ..doneTeleporting
 
         LDA.w !E4,y                             ; \
         STA $94                                 ; |
@@ -320,14 +318,14 @@ HandleState:
         STA !Timer
         INC !State
 
-..keepTeleporting
+    ..keepTeleporting
         RTS
 
 
 
 
 
-        ; state 03: "exiting pipe" animation
+; state 03: "exiting pipe" animation
 
 .exitingPipe
 
@@ -336,14 +334,14 @@ HandleState:
 
         LDA $187A|!addr                         ; \
         BEQ ..notOnYoshi                        ; |
-..onYoshi                                       ; | set pipe exiting pose
+    ..onYoshi                                   ; | set pipe exiting pose
         LDA #$02                                ; |
         STA $1419|!addr                         ; |
         LDA #$21                                ; |
         BRA +                                   ; |
-..notOnYoshi                                    ; |
+    ..notOnYoshi                                ; |
         LDA #$0F                                ; |
-+       STA $13E0|!addr                         ; /
+    +   STA $13E0|!addr                         ; /
 
         LDA #-$38                               ; \
         STA $7D                                 ; | move the player up the pipe
@@ -360,10 +358,13 @@ HandleState:
           if !FixFreeze                         ; |
             STA !FreezeRAM                      ; |
           endif                                 ; |
-        endif                                   ; |
-        RTS                                     ; /
+        endif                                   ; /
 
-..nextState
+        LDA #$00                                ; \ reset controller bits
+        STA $15                                 ; /
+        RTS
+
+    ..nextState
 
         LDY !OtherPipeIndex                     ; \
         LDA.w !E4,y                             ; |
@@ -387,9 +388,6 @@ HandleState:
         ;STZ $9D                                ; /
         STZ !State
 
-        LDA !ControllerBackup                   ; \  re-enable the controller
-        STA $0DA0|!addr                         ; /
-
         STZ $1497|!addr                         ; stop invulnerability
         RTS
 
@@ -410,7 +408,7 @@ GetOtherPipeIndex:
 
         PHX                                     ; \  loop through all sprites
         LDX #!SprSize-1                         ; /
-.loop
+    .loop
         CPX $15E9|!addr                         ; \
         BEQ .continue                           ; |
         LDA !14C8,x                             ; | if it's active, it's a custom sprite,
@@ -425,20 +423,20 @@ GetOtherPipeIndex:
         LDA !extra_byte_1,x                     ; |
         CMP $01                                 ; |
         BNE .continue                           ; /
-.foundOtherPipeTop
+    .foundOtherPipeTop
         TXY
         INC $02
-.continue
+    .continue
         DEX
         BPL .loop
-.break
+    .break
         PLX                                     ; \
         LDA $02                                 ; |
         CMP #$01                                ; | return invalid value
         BEQ .valid                              ; | if not exactly one other pipe was found
-.invalid                                        ; |
+    .invalid                                    ; |
         LDY #$FF                                ; |
-.valid                                          ; |
+    .valid                                      ; |
         RTS                                     ; /
 
 
@@ -461,22 +459,22 @@ SetTeleportingXSpeed:
         CMP #$0010                              ; |
         SEP #$20                                ; | if the distance is less than a tile,
         BCS .notCloseEnough                     ; | stop moving
-.closeEnough                                    ; | (it doesn't need to be an exact match,
+    .closeEnough                                    ; | (it doesn't need to be an exact match,
         STZ $7B                                 ; | the player's position will be set to the exact value later on)
         RTS                                     ; |
-.notCloseEnough                                 ; /
+    .notCloseEnough                             ; /
 
         REP #$20                                ; \
         LDA $00                                 ; |
         SEP #$20                                ; | otherwise, move the player left or right
         BMI .negativeSpeed                      ; | depending on whether the distance is negative or positive
-.positiveSpeed                                  ; |
+    .positiveSpeed                              ; |
         LDA #!TeleportingSpeed                  ; |
         BRA +                                   ; |
-.negativeSpeed                                  ; |
+    .negativeSpeed                              ; |
         LDA #-!TeleportingSpeed                 ; |
 +       STA $7B                                 ; |
-.return                                         ; |
+    .return                                     ; |
         RTS                                     ; /
 
 
@@ -499,22 +497,22 @@ SetTeleportingYSpeed:
         CMP #$0010
         SEP #$20
         BCS .notCloseEnough
-.closeEnough
+    .closeEnough
         STZ $7D
         RTS
-.notCloseEnough
+    .notCloseEnough
 
         REP #$20
         LDA $00
         SEP #$20
         BMI .negativeSpeed
-.positiveSpeed
+    .positiveSpeed
         LDA #!TeleportingSpeed
         BRA +
-.negativeSpeed
+    .negativeSpeed
         LDA #-!TeleportingSpeed
 +       STA $7D
-.return
+    .return
         RTS
 
 
@@ -526,18 +524,50 @@ SetTeleportingYSpeed:
 EraseFireballs:
 
         LDY #$09
-.loop
+    .loop
         LDA !extended_num,y
         CMP #$05
         BNE .continue
         LDA #$00
         STA !extended_num,y
-.continue
+    .continue
         DEY
         BPL .loop
 
         RTS
 
+
+!EverythingButStartBits = %11101111
+
+DisableControllerInput:
+
+    .disableFirstByteBits
+        LDA #!EverythingButStartBits
+        AND #%10110000
+        BEQ +
+        EOR #!EverythingButStartBits
+        TRB $15
+        TRB $16
+        EOR #!EverythingButStartBits
+        TSB $0DAA|!addr
+        TSB $0DAB|!addr
+        BRA .disableSecondByteBits
+
+        +
+        LDA #!EverythingButStartBits
+        TSB $0DAA|!addr
+        TSB $0DAB|!addr
+        TRB $15
+        TRB $16
+
+    .disableSecondByteBits
+    	LDA #%11110000
+        TRB $17
+        TSB $0DAC|!addr
+        TSB $0DAD|!addr
+
+    .return
+        RTS
 
 
 
@@ -548,9 +578,9 @@ HandleCarryableSpriteStuff:
         LDA !14C8,x
         CMP #$0B
         BEQ .carried
-.notCarried
+    .notCarried
         JSL $019138|!BankB
-.carried
+    .carried
 
         LDA !1588,x
         AND #$04
@@ -562,7 +592,7 @@ HandleCarryableSpriteStuff:
         AND #$08
         BEQ .notAgainstCeiling
 
-.againstCeiling
+    .againstCeiling
         LDA #$10
         STA !AA,x
         LDA !1588,x
@@ -591,7 +621,7 @@ HandleCarryableSpriteStuff:
         LDA #$08
         STA !1FE2,x
 
-.notAgainstCeiling
+    .notAgainstCeiling
         LDA !1588,x
         AND #$03
         BEQ .notAgainstWall
@@ -605,8 +635,8 @@ HandleCarryableSpriteStuff:
         PLP
         ROR !B6,x
 
-.notOnGround
-.notAgainstWall
+    .notOnGround
+    .notAgainstWall
 
         RTS
 
@@ -642,10 +672,8 @@ HandleBlockHit:
         LDA #$05
         STA !1FE2,x
 
-.return
+    .return
         RTS
-
-
 
 
 
@@ -668,9 +696,9 @@ HandleLandingBounce:
         LDA #$00
         LDY !15B8,x
         BEQ .store
-.speed2
+    .speed2
         LDA #$18
-.store
+    .store
         STA !AA,x
 
         PLA
@@ -681,10 +709,10 @@ HandleLandingBounce:
         BMI .return
         STA !AA,x
 
-.return
+    .return
         RTS
 
-.bounceSpeeds
+    .bounceSpeeds
         db $00,$00,$00,$F8,$F8,$F8,$F8,$F8
         db $F8,$F7,$F6,$F5,$F4,$F3,$F2,$E8
         db $E8,$E8,$E8,$00,$00,$00,$00,$FE
@@ -714,14 +742,14 @@ HandleInteraction:
         LDA #$0B
         STA !14C8,x
 
-.keepCarried
+    .keepCarried
         INC $1470|!addr
         LDA #$08
         STA $1498|!addr
         CLC
         RTS
 
-.checkSprite
+    .checkSprite
         LDA !14C8,x
         CMP #$09
         BNE .return
@@ -741,7 +769,7 @@ HandleInteraction:
         CLC
         RTS
 
-.onTop
+    .onTop
         LDA $7D
         BMI .return
 
@@ -753,7 +781,7 @@ HandleInteraction:
         LDY $187A|!addr
         BEQ .notOnYoshi
         LDA #$2F
-.notOnYoshi
+    .notOnYoshi
         STA $00
 
         LDA !D8,x
@@ -766,11 +794,11 @@ HandleInteraction:
         SEC
         RTS
 
-.return
+    .return
         CLC
         RTS
 
-.solidSides
+    .solidSides
         STZ $7B
         %SubHorzPos()
         TYA : ASL : TAY
@@ -782,7 +810,7 @@ HandleInteraction:
         CLC
         RTS
 
-.DATA_01AB2D
+    .DATA_01AB2D
         db $01,$00,$FF,$FF
 
 
@@ -798,7 +826,7 @@ Graphics:
         LDA $13F9|!addr                         ; \  if the player is inside the pipe,
         BNE .priority                           ; /  use a different graphics routine to draw the tile on top of them
 
-.normal
+    .normal
 
         LDA $00                                 ;    otherwise, it's about the most basic graphics routine you can get
         STA $0300|!addr,y
@@ -820,12 +848,12 @@ Graphics:
 
 
 
-.priority
+    .priority
         LDA #$F0                                ; \  carryable custom sprites draw their own tile in this slot for some reason,
         STA $0301|!addr,y                       ; /  so we need to explicitly remove that
 
         LDY #$00                                ; \
-..loop                                          ; |
+    ..loop                                      ; |
         LDA $0201|!addr,y                       ; | find a new free slot, this time in the $0200 area
         CMP #$F0                                ; | so it has priority over the player sprite
         BEQ ..break                             ; |
@@ -833,7 +861,7 @@ Graphics:
         CPY #$FC                                ; |
         BNE ..loop                              ; |
         RTS                                     ; |
-..break                                         ; /
+    ..break                                     ; /
 
         LDA $00                                 ; \
         STA $0200|!addr,y                       ; |
@@ -854,12 +882,7 @@ Graphics:
 
         RTS
 
-
-
-
-
 .properties
-
         db $3B,$39,$37,$35
 
 
@@ -887,7 +910,7 @@ FinishOAMWriteRt:
         LDA !14E0,x
         STA $03
 
-.loop
+    .loop
         TYA
         LSR
         LSR
@@ -898,13 +921,13 @@ FinishOAMWriteRt:
         AND #$02
         STA $0420|!addr,x ; <---
         BRA ++
-+       STA $0420|!addr,x ; <---
-++      LDX.B #$00
+    +   STA $0420|!addr,x ; <---
+    ++  LDX.B #$00
         LDA $0200|!addr,y ; <---
         SEC : SBC $07
         BPL +
         DEX
-+       CLC : ADC $02
+    +   CLC : ADC $02
         STA $04
         TXA
         ADC $03
@@ -924,12 +947,12 @@ FinishOAMWriteRt:
         LDA $0420|!addr,x ; <---
         ORA #$01
         STA $0420|!addr,x ; <---
-+       LDX.B #$00
+    +   LDX.B #$00
         LDA $0201|!addr,y ; <---
         SEC : SBC $06
         BPL +
         DEX
-+       CLC : ADC $00
+    +   CLC : ADC $00
         STA $09
         TXA
         ADC $01
@@ -948,8 +971,8 @@ FinishOAMWriteRt:
 
         BCC +
         LDA #$F0
-        STA $0201|!addr,y ; <---
-+       INY #4
+        STA $0201|!addr,y
+    +   INY #4
         DEC $08
         BPL .loop
 

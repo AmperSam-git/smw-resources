@@ -72,12 +72,11 @@ CHANGELOG
         - Disabled entering a pipe when the other is in Yoshi's mouth
         - Disabled entering a pipe when the other is on the horizontal
           edges of the level
-    - August 8, 2024 (by AmperSam):
+    - April 21, 2025 (by AmperSam):
 	- Made Mario invincible while teleporting, both to prevent power 
 	  up loss and to mitigate dying while in the pipe
-	- For good measure a check while teleporting to see if Mario is 
-	  dead to prevent a rare softlock in hacks with Retry where the 
-	  controller remains disabled when Mario dies
+	- reworked the controller disable functionality to prevent some
+ 	  softlocks and drop the hack that swaps controller po
 	- Added JSON config for insertion
 
 THANKS FOR HELP, BUG REPORTS AND SUGGESTIONS
